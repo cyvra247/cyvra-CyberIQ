@@ -1,0 +1,761 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="Check your Cyber IQ — a CYVRA awareness test based on real-world attack patterns. Instant score." />
+  <meta property="og:title" content="CYVRA Cyber IQ" />
+  <meta property="og:description" content="A 2–3 minute cybersecurity awareness test. Instant score. No login." />
+  <meta property="og:type" content="website" />
+  <title>CYVRA Cyber IQ</title>
+
+  <style>
+    :root{
+      --bg:#0b0b0f;
+      --card:#12121a;
+      --card2:#161622;
+      --text:#f4f4f6;
+      --muted:#b7b7c4;
+      --line:#232335;
+      --red:#c1121f;        /* CYVRA red */
+      --red2:#8f0d16;
+      --good:#26d07c;
+      --warn:#ffd166;
+      --mid:#ff8a3d;
+      --bad:#ff4d4d;
+      --shadow: 0 18px 50px rgba(0,0,0,.45);
+      --radius: 18px;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0; background: radial-gradient(1200px 700px at 20% 0%, rgba(193,18,31,.18), transparent 60%),
+                         radial-gradient(1000px 600px at 80% 10%, rgba(193,18,31,.12), transparent 55%),
+                         var(--bg);
+      color:var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      line-height:1.45;
+    }
+
+    .wrap{
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 28px 18px 60px;
+    }
+
+    .topbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      margin-bottom: 18px;
+    }
+
+    .brand{
+      display:flex; align-items:center; gap:10px;
+      user-select:none;
+    }
+    .logo{
+      width:34px; height:34px; border-radius:10px;
+      background: linear-gradient(135deg, var(--red), var(--red2));
+      box-shadow: 0 10px 24px rgba(193,18,31,.25);
+    }
+    .brand h1{
+      margin:0; font-size: 16px; letter-spacing:.4px;
+    }
+    .brand span{
+      display:block; font-size: 12px; color:var(--muted);
+      margin-top:1px;
+    }
+
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding: 8px 12px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 18px;
+      align-items:start;
+    }
+
+    @media (max-width: 860px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.03), transparent 45%), var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card .pad{ padding: 18px; }
+
+    .hero{
+      padding: 20px 18px;
+      background: linear-gradient(135deg, rgba(193,18,31,.20), rgba(193,18,31,.06));
+      border-bottom: 1px solid rgba(255,255,255,.05);
+    }
+    .hero h2{ margin:0 0 6px; font-size: 22px; }
+    .hero p{ margin:0; color:var(--muted); max-width: 62ch; }
+
+    .scale{
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(0,0,0,.18);
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .scale .row{
+      display:flex; justify-content:space-between; gap:12px;
+      padding: 6px 0;
+      border-bottom: 1px dashed rgba(255,255,255,.08);
+    }
+    .scale .row:last-child{ border-bottom: none; }
+    .tag{ font-weight: 650; color: var(--text); }
+    .tag.good{ color: var(--good); }
+    .tag.warn{ color: var(--warn); }
+    .tag.mid{ color: var(--mid); }
+    .tag.bad{ color: var(--bad); }
+
+    .subtle{
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 10px;
+    }
+
+    .progress{
+      height: 10px;
+      background: rgba(255,255,255,.06);
+      border-radius: 999px;
+      overflow:hidden;
+      border: 1px solid rgba(255,255,255,.08);
+    }
+    .bar{
+      height: 100%;
+      width:0%;
+      background: linear-gradient(90deg, var(--red), #ff3b3b);
+      transition: width .25s ease;
+    }
+
+    .qwrap{
+      padding: 18px;
+    }
+    .qmeta{
+      display:flex; justify-content:space-between; align-items:center; gap:10px;
+      margin-bottom: 10px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .question{
+      font-size: 18px;
+      margin: 0 0 12px;
+    }
+    .answers{
+      display:grid;
+      gap: 10px;
+    }
+    .opt{
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      border-radius: 14px;
+      padding: 12px 12px;
+      cursor:pointer;
+      transition: transform .08s ease, border-color .15s ease, background .15s ease;
+    }
+    .opt:hover{
+      transform: translateY(-1px);
+      border-color: rgba(193,18,31,.45);
+      background: rgba(193,18,31,.08);
+    }
+    .opt.selected{
+      border-color: rgba(193,18,31,.80);
+      background: rgba(193,18,31,.16);
+    }
+    .opt .t{
+      font-size: 14px; color: var(--text);
+    }
+
+    .controls{
+      display:flex; justify-content:space-between; align-items:center;
+      gap:12px;
+      padding: 16px 18px;
+      border-top: 1px solid rgba(255,255,255,.06);
+      background: rgba(0,0,0,.20);
+    }
+    .btn{
+      appearance:none;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.03);
+      color: var(--text);
+      border-radius: 14px;
+      padding: 10px 12px;
+      cursor:pointer;
+      font-weight: 600;
+      font-size: 13px;
+      transition: background .15s ease, transform .08s ease, border-color .15s ease;
+    }
+    .btn:hover{ background: rgba(255,255,255,.06); transform: translateY(-1px); }
+    .btn.primary{
+      border-color: rgba(193,18,31,.55);
+      background: linear-gradient(135deg, rgba(193,18,31,.85), rgba(143,13,22,.90));
+    }
+    .btn.primary:hover{
+      border-color: rgba(193,18,31,.85);
+      background: linear-gradient(135deg, rgba(193,18,31,.92), rgba(143,13,22,.95));
+    }
+    .btn:disabled{
+      opacity:.45; cursor:not-allowed; transform:none;
+    }
+
+    .side{
+      position: sticky;
+      top: 18px;
+    }
+    .side .pad h3{ margin:0 0 6px; font-size: 16px; }
+    .side .pad p{ margin:0; color: var(--muted); font-size: 13px; }
+
+    .result{
+      padding: 18px;
+    }
+    .score{
+      font-size: 40px;
+      margin: 10px 0 4px;
+      letter-spacing: .5px;
+    }
+    .level{
+      display:inline-flex; align-items:center; gap:10px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.03);
+      font-weight: 750;
+      margin-bottom: 10px;
+    }
+    .explain{
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 8px;
+    }
+    .mini{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 14px;
+    }
+    @media (max-width: 520px){
+      .mini{ grid-template-columns: 1fr; }
+    }
+    .mini .box{
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(0,0,0,.18);
+      border-radius: 14px;
+      padding: 12px;
+    }
+    .mini .k{ color: var(--muted); font-size: 12px; }
+    .mini .v{ margin-top: 6px; font-weight: 750; }
+
+    .toast{
+      position: fixed;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(0,0,0,.78);
+      border: 1px solid rgba(255,255,255,.12);
+      color: var(--text);
+      font-size: 13px;
+      display:none;
+      z-index: 99;
+    }
+
+    .mutedLink{
+      color: #ffb3b3;
+      text-decoration: none;
+      border-bottom: 1px dashed rgba(255,255,255,.24);
+    }
+    .mutedLink:hover{ border-bottom-color: rgba(193,18,31,.9); }
+
+    footer{
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 12px;
+      text-align:center;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>CYVRA</h1>
+          <span>Cyber IQ Self-Check</span>
+        </div>
+      </div>
+      <div class="pill">
+        No login • Instant score • 8 questions
+      </div>
+    </div>
+
+    <div class="grid">
+      <main class="card" id="mainCard" aria-live="polite">
+        <div class="hero">
+          <h2>Check Your Cyber IQ</h2>
+          <p>
+            A short test that measures everyday cybersecurity awareness — not job title, not technical skill.
+            Your result appears instantly.
+          </p>
+
+          <div class="scale" role="note" aria-label="Cyber IQ scoring scale">
+            <div class="row"><span>90–100</span><span class="tag good">Cyber Aware</span></div>
+            <div class="row"><span>70–89</span><span class="tag warn">Cyber Conscious</span></div>
+            <div class="row"><span>40–69</span><span class="tag mid">Cyber Exposed</span></div>
+            <div class="row"><span>0–39</span><span class="tag bad">Cyber Vulnerable</span></div>
+            <div class="subtle">This score reflects awareness. Training improves outcomes.</div>
+          </div>
+
+          <div style="margin-top:14px;">
+            <div class="qmeta">
+              <div id="stepText">Ready</div>
+              <div id="countText">0 / 8</div>
+            </div>
+            <div class="progress" aria-label="Progress">
+              <div class="bar" id="bar"></div>
+            </div>
+          </div>
+        </div>
+
+        <section class="qwrap" id="stage"></section>
+
+        <div class="controls">
+          <button class="btn" id="backBtn" type="button">Back</button>
+          <div style="display:flex; gap:10px; align-items:center;">
+            <button class="btn" id="resetBtn" type="button">Restart</button>
+            <button class="btn primary" id="nextBtn" type="button">Start</button>
+          </div>
+        </div>
+      </main>
+
+      <aside class="card side">
+        <div class="pad">
+          <h3>How to use this</h3>
+          <p>
+            Answer honestly. Some questions are intentionally tricky because real attacks are tricky.
+            Your score is designed to be a reality check — not a judgment.
+          </p>
+
+          <div style="height:12px;"></div>
+
+          <h3>Share</h3>
+          <p>
+            After you finish, you can copy your result summary and share the link via QR code.
+          </p>
+
+          <div style="height:14px;"></div>
+
+          <p class="subtle">
+            Want CYVRA branding on your own domain later? You can move this file to your CYVRA website anytime.
+          </p>
+        </div>
+      </aside>
+    </div>
+
+    <footer>
+      © CYVRA • Cyber IQ is an awareness indicator, not a scientific intelligence measurement.
+    </footer>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ======= QUIZ CONFIG =======
+    // Each question: text, options[], correctIndex, domain (for optional breakdown)
+    const quiz = [
+      {
+        domain: "Phishing & Impersonation",
+        q: "Q1. You receive an email from your CEO asking for an urgent file. What is the safest action?",
+        options: [
+          "Reply immediately to avoid delays",
+          "Click the link provided in the email",
+          "Verify the request through another channel",
+          "Forward it to a colleague"
+        ],
+        correct: 2
+      },
+      {
+        domain: "MFA & Identity Attacks",
+        q: "Q2. You receive multiple MFA push notifications that you did NOT initiate. You are in the middle of a meeting. What is the MOST secure action?",
+        options: [
+          "Approve one request to stop the notifications",
+          "Ignore them and continue the meeting",
+          "Deny the requests and immediately report it as a security incident",
+          "Change your password later when you have time"
+        ],
+        correct: 2
+      },
+      {
+        domain: "Passwords",
+        q: "Q3. Which password below provides the STRONGEST real-world protection against modern attacks?",
+        options: [
+          "P@ssw0rd!2025",
+          "CompanyName#2024",
+          "correct-horse-battery-staple-river",
+          "X7!aQ$9z"
+        ],
+        correct: 2
+      },
+      {
+        domain: "Cloud Phishing",
+        q: "Q4. A coworker shares a Microsoft OneDrive link to a document and asks you to review it urgently. What is the PRIMARY risk?",
+        options: [
+          "OneDrive links are safe because Microsoft hosts them",
+          "The document could contain malware",
+          "The link could be a phishing page designed to steal credentials",
+          "There is no real risk if the sender is internal"
+        ],
+        correct: 2
+      },
+      {
+        domain: "Sessions & Tokens",
+        q: "Q5. You click a link and land on a page that shows you are already logged in to your Microsoft account. What should you assume FIRST?",
+        options: [
+          "Your session is safe because no login was required",
+          "The site used a trusted single sign-on flow",
+          "Your session may have been hijacked or reused by an attacker",
+          "This only happens on compromised devices"
+        ],
+        correct: 2
+      },
+      {
+        domain: "Reporting & Response",
+        q: "Q6. You receive a suspicious email but do NOT click anything. What is the BEST action?",
+        options: [
+          "Delete the email and move on",
+          "Ignore it since no action was taken",
+          "Report the email using the organization’s reporting process",
+          "Block the sender manually"
+        ],
+        correct: 2
+      },
+      {
+        domain: "Web Deception",
+        q: "Q7. While browsing, a pop-up claims your browser is outdated and urges an immediate update. What is the SAFEST response?",
+        options: [
+          "Click the update link to stay protected",
+          "Close the browser tab and continue working",
+          "Navigate directly to the official browser website to verify and update",
+          "Run antivirus software later"
+        ],
+        correct: 2
+      },
+      {
+        domain: "Data Sharing",
+        q: "Q8. You are asked to share a file externally. What is the MOST secure approach?",
+        options: [
+          "Share the file with “Anyone with the link”",
+          "Email the file directly as an attachment",
+          "Share with specific users and limit permissions to what’s necessary",
+          "Upload the file to a personal cloud account"
+        ],
+        correct: 2
+      }
+    ];
+
+    const POINTS_PER_Q = 12.5; // 8 x 12.5 = 100
+
+    // ======= STATE =======
+    let idx = -1; // -1 = intro state
+    const answers = new Array(quiz.length).fill(null);
+
+    // ======= DOM =======
+    const stage = document.getElementById("stage");
+    const nextBtn = document.getElementById("nextBtn");
+    const backBtn = document.getElementById("backBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const stepText = document.getElementById("stepText");
+    const countText = document.getElementById("countText");
+    const bar = document.getElementById("bar");
+    const toast = document.getElementById("toast");
+
+    function showToast(msg){
+      toast.textContent = msg;
+      toast.style.display = "block";
+      setTimeout(()=> toast.style.display = "none", 1800);
+    }
+
+    function clamp(n,min,max){ return Math.max(min, Math.min(max,n)); }
+
+    function progressPct(){
+      const answered = answers.filter(a=>a!==null).length;
+      return Math.round((answered / quiz.length) * 100);
+    }
+
+    function setHeader(){
+      const answered = answers.filter(a=>a!==null).length;
+      countText.textContent = `${answered} / ${quiz.length}`;
+
+      if (idx < 0) {
+        stepText.textContent = "Ready";
+        nextBtn.textContent = "Start";
+        backBtn.disabled = true;
+      } else if (idx >= 0 && idx < quiz.length) {
+        stepText.textContent = `Question ${idx+1}`;
+        nextBtn.textContent = (idx === quiz.length - 1) ? "See Results" : "Next";
+        backBtn.disabled = (idx === 0);
+      } else {
+        stepText.textContent = "Results";
+        nextBtn.textContent = "Copy Result Summary";
+        backBtn.disabled = true;
+      }
+
+      bar.style.width = `${progressPct()}%`;
+    }
+
+    function renderIntro(){
+      stage.innerHTML = `
+        <div class="pad" style="padding:18px;">
+          <h3 style="margin:0 0 8px; font-size:16px;">Before you start</h3>
+          <p style="margin:0; color:var(--muted); font-size:13px;">
+            This test is intentionally challenging because real attacks are designed to bypass confidence.
+            Answer based on what you would do today.
+          </p>
+
+          <div class="mini" style="margin-top:14px;">
+            <div class="box">
+              <div class="k">Time</div>
+              <div class="v">2–3 minutes</div>
+            </div>
+            <div class="box">
+              <div class="k">Data</div>
+              <div class="v">No login required</div>
+            </div>
+          </div>
+
+          <p class="explain">
+            Tip: If you share this link internally, you can use average scores to spark training conversations.
+          </p>
+        </div>
+      `;
+    }
+
+    function renderQuestion(){
+      const q = quiz[idx];
+      const sel = answers[idx];
+
+      const opts = q.options.map((t, i) => {
+        const cls = (sel === i) ? "opt selected" : "opt";
+        return `<div class="${cls}" role="button" tabindex="0" data-i="${i}">
+                  <div class="t">${t}</div>
+                </div>`;
+      }).join("");
+
+      stage.innerHTML = `
+        <div class="qmeta">
+          <div>${q.domain}</div>
+          <div>Choose one</div>
+        </div>
+        <h3 class="question">${q.q}</h3>
+        <div class="answers" id="answers">${opts}</div>
+        <div class="explain">
+          This is an awareness question. The safest choice is usually the one that verifies trust, reduces urgency, or limits access.
+        </div>
+      `;
+
+      const container = document.getElementById("answers");
+      container.querySelectorAll(".opt").forEach(el => {
+        const pick = () => {
+          const i = parseInt(el.getAttribute("data-i"), 10);
+          answers[idx] = i;
+          renderQuestion(); // re-render to show selection
+          setHeader();
+        };
+        el.addEventListener("click", pick);
+        el.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") pick();
+        });
+      });
+    }
+
+    function computeScore(){
+      let correctCount = 0;
+      const domainStats = {}; // domain -> {correct,total}
+      quiz.forEach((q, i) => {
+        const chosen = answers[i];
+        const correct = (chosen === q.correct);
+        if (!domainStats[q.domain]) domainStats[q.domain] = {correct:0,total:0};
+        domainStats[q.domain].total += 1;
+        if (correct) {
+          correctCount += 1;
+          domainStats[q.domain].correct += 1;
+        }
+      });
+      const score = Math.round((correctCount * POINTS_PER_Q) * 10) / 10; // 1 decimal max
+      return { score, correctCount, domainStats };
+    }
+
+    function levelFor(score){
+      if (score >= 90) return { label:"Cyber Aware", color:"var(--good)" };
+      if (score >= 70) return { label:"Cyber Conscious", color:"var(--warn)" };
+      if (score >= 40) return { label:"Cyber Exposed", color:"var(--mid)" };
+      return { label:"Cyber Vulnerable", color:"var(--bad)" };
+    }
+
+    function renderResults(){
+      const { score, correctCount, domainStats } = computeScore();
+      const lvl = levelFor(score);
+
+      // Find weakest domain to create a useful insight
+      let weakest = null;
+      for (const d of Object.keys(domainStats)){
+        const s = domainStats[d];
+        const pct = s.correct / s.total;
+        if (weakest === null || pct < weakest.pct){
+          weakest = { domain:d, pct, ...s };
+        }
+      }
+
+      const strength = (score >= 70) ? "Your foundation is solid, but advanced deception still matters." :
+                       (score >= 40) ? "Common identity and phishing patterns could still bypass you." :
+                                       "You are at elevated risk without structured awareness reinforcement.";
+
+      stage.innerHTML = `
+        <div class="result">
+          <div class="level" style="border-color: ${lvl.color};">
+            <span style="display:inline-block; width:10px; height:10px; border-radius:999px; background:${lvl.color};"></span>
+            <span>${lvl.label}</span>
+          </div>
+
+          <div class="score">${score}<span style="font-size:18px; color:var(--muted);"> / 100</span></div>
+          <div style="color:var(--muted); font-size:13px;">Correct answers: ${correctCount} / ${quiz.length}</div>
+
+          <div class="mini">
+            <div class="box">
+              <div class="k">Primary insight</div>
+              <div class="v">${strength}</div>
+            </div>
+            <div class="box">
+              <div class="k">Most improvement opportunity</div>
+              <div class="v">${weakest ? weakest.domain : "—"}</div>
+            </div>
+          </div>
+
+          <div class="explain">
+            This score measures cybersecurity awareness — not intelligence, job role, or technical skill.
+            Training improves performance because it changes habits under pressure.
+          </div>
+
+          <div style="margin-top:14px; border-top:1px solid rgba(255,255,255,.06); padding-top:14px;">
+            <div style="font-weight:750; margin-bottom:6px;">Share your result</div>
+            <div style="color:var(--muted); font-size:13px; margin-bottom:10px;">
+              Use the button below to copy a short summary you can paste into LinkedIn or internal chat.
+            </div>
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+              <button class="btn primary" type="button" id="copyBtn">Copy Result Summary</button>
+              <button class="btn" type="button" id="copyLinkBtn">Copy Page Link</button>
+              <a class="btn" style="text-decoration:none; display:inline-flex; align-items:center;" target="_blank"
+                 href="https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(location.href)}">
+                Share on LinkedIn
+              </a>
+            </div>
+            <div class="subtle">
+              Tip: Create a QR code from this page link and place it on a booth sign: “Scan to check your Cyber IQ.”
+            </div>
+          </div>
+        </div>
+      `;
+
+      document.getElementById("copyBtn").addEventListener("click", async () => {
+        const msg = `I took the CYVRA Cyber IQ test and scored ${score}/100 (${lvl.label}).\n\nCheck your Cyber IQ here: ${location.href}`;
+        try { await navigator.clipboard.writeText(msg); showToast("Result summary copied."); }
+        catch { showToast("Copy failed. Try on a different browser."); }
+      });
+
+      document.getElementById("copyLinkBtn").addEventListener("click", async () => {
+        try { await navigator.clipboard.writeText(location.href); showToast("Link copied."); }
+        catch { showToast("Copy failed. Try on a different browser."); }
+      });
+    }
+
+    function canGoNextFromQuestion(){
+      return answers[idx] !== null;
+    }
+
+    function goTo(n){
+      idx = n;
+
+      if (idx < 0) renderIntro();
+      else if (idx >= 0 && idx < quiz.length) renderQuestion();
+      else renderResults();
+
+      setHeader();
+      // Update next button enabled state
+      if (idx >= 0 && idx < quiz.length){
+        nextBtn.disabled = !canGoNextFromQuestion();
+      } else {
+        nextBtn.disabled = false;
+      }
+    }
+
+    nextBtn.addEventListener("click", () => {
+      if (idx < 0){
+        goTo(0);
+        return;
+      }
+
+      if (idx >= 0 && idx < quiz.length){
+        if (!canGoNextFromQuestion()){
+          showToast("Select an answer to continue.");
+          return;
+        }
+        if (idx === quiz.length - 1){
+          goTo(quiz.length); // results
+        } else {
+          goTo(idx + 1);
+        }
+        return;
+      }
+
+      // On results page, copy result summary
+      const { score } = computeScore();
+      const lvl = levelFor(score);
+      const msg = `I took the CYVRA Cyber IQ test and scored ${score}/100 (${lvl.label}).\n\nCheck your Cyber IQ here: ${location.href}`;
+      navigator.clipboard.writeText(msg).then(()=>showToast("Result summary copied."), ()=>showToast("Copy failed."));
+    });
+
+    backBtn.addEventListener("click", () => {
+      if (idx <= 0) return;
+      goTo(idx - 1);
+    });
+
+    resetBtn.addEventListener("click", () => {
+      for (let i=0;i<answers.length;i++) answers[i] = null;
+      goTo(-1);
+      showToast("Restarted.");
+    });
+
+    // Enable/disable next based on selection
+    const _origRenderQuestion = renderQuestion;
+    renderQuestion = function(){
+      _origRenderQuestion();
+      nextBtn.disabled = !canGoNextFromQuestion();
+    }
+
+    // Start on intro
+    goTo(-1);
+  </script>
+</body>
+</html>
